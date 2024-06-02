@@ -6,17 +6,18 @@ import { fixupConfigRules } from "@eslint/compat";
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default [
-  {
-  files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-  languageOptions: { globals: globals.browser },
-  settings: {
-    react: {
-     version: "detect",
-    },
-  },
-  },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   ...fixupConfigRules(pluginReactConfig),
   eslintPluginPrettierRecommended,
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    languageOptions: { globals: globals.browser },
+    settings: {
+      react: { version: "detect" },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ];
