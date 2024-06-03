@@ -46,6 +46,7 @@
   "types": "dist/index.d.ts",
   "peerDependencies": {
     "axios": "*",
-    "react": "*"
+    "react": "*",
+    "react-dom": "*"
   }
 }

@@ -45,14 +45,14 @@ export const OktoProvider = ({
   apiKey: string;
   buildType: BuildType;
 }) => {
-  const oktoBottomSheetRef = useRef<any>(null);
+  // const oktoBottomSheetRef = useRef<any>(null);
 
   const showBottomSheet = (
     screen: BottomSheetType,
     callback: (success: boolean) => void,
   ) => {
     if (RnOktoSdk.isLoggedIn()) {
-      oktoBottomSheetRef.current?.openSheet(screen, callback);
+      // oktoBottomSheetRef.current?.openSheet(screen, callback);
     } else {
       console.error("user not logged in");
     }
@@ -67,7 +67,7 @@ export const OktoProvider = ({
   };
 
   const closeBottomSheet = () => {
-    oktoBottomSheetRef.current?.closeSheet();
+    // oktoBottomSheetRef.current?.closeSheet();
   };
 
   function authenticate(
