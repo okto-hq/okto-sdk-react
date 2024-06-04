@@ -33,10 +33,11 @@ export const getJSONLocalStorage = async (key: string) => {
   }
   try {
     const jsonValue = localStorage.getItem(key);
-    if (jsonValue !== null) {
+    if (jsonValue !== null && jsonValue !== "undefined") {
       const value = JSON.parse(jsonValue);
       return value;
     }
+    return null;
   } catch (e) {
     console.error("Error getting JSON data from local storage", e);
   }
