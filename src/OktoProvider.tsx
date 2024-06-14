@@ -203,6 +203,51 @@ export const OktoProvider = ({
     }
   }
 
+  async function authenticateWithUserId(
+    userId: string,
+    jwtToken: string,
+    callback: (result: any, error: any) => void,
+  ) {
+    if (!axiosInstance) {
+      return callback(null, new Error("SDK is not initialized"));
+    }
+
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/v1/jwt-authenticate`,
+        {
+          user_id: userId,
+          auth_token: jwtToken,
+        },
+        {
+          headers: {
+            Accept: "*/*",
+            "x-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (
+        response.status === 200 &&
+        response.data &&
+        response.data.status === "success"
+      ) {
+        const authDetailsNew: AuthDetails = {
+          authToken: response.data.data.auth_token,
+          refreshToken: response.data.data.refresh_auth_token,
+          deviceToken: response.data.data.device_token,
+        };
+        updateAuthDetails(authDetailsNew);
+        callback(response.data.data, null);
+      } else {
+        callback(null, new Error("Server responded with an error"));
+      }
+    } catch (error) {
+      callback(null, error);
+    }
+  }
+
   async function makeGetRequest<T>(
     endpoint: string,
     queryUrl: string | null = null,
@@ -447,6 +492,7 @@ export const OktoProvider = ({
       value={{
         isLoggedIn,
         authenticate,
+        authenticateWithUserId,
         logOut,
         getPortfolio,
         getSupportedNetworks,
