@@ -129,7 +129,7 @@ describe("OktoProvider", () => {
 
     const okto = await getOktoContext();
 
-    //Calling any api should result in refresh token being updated
+    // Calling any API should result in refresh token being updated
     await act(async () => {
       try {
         await okto.current.getPortfolio();
@@ -142,6 +142,24 @@ describe("OktoProvider", () => {
         mockAuthDetails
       );
     });
+  });
+
+  it("should handle refresh token failure", async () => {
+    axiosMock.onPost(`${baseUrl}/api/v1/refresh_token`).reply(401);
+    axiosMock.onGet(`${baseUrl}/api/v1/portfolio`).reply(401);
+
+    getJSONLocalStorage.mockResolvedValue(mockAuthDetails);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getPortfolio();
+      } catch (error) {}
+    });
+
+    expect(okto.current.isLoggedIn).toBe(false);
+    expect(storeJSONLocalStorage).toHaveBeenCalledWith(expect.anything(), null);
   });
 
   // API Request Tests
@@ -158,6 +176,36 @@ describe("OktoProvider", () => {
     });
   });
 
+  it("should handle server failed for fetch portfolio", async () => {
+    axiosMock
+      .onGet(`${baseUrl}/api/v1/portfolio`)
+      .reply(200, {status: "failed", data: mockPortfolioData.data});
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getPortfolio();
+      } catch (error) {
+        expect(error.message).toBe("Server responded with an error");
+      }
+    });
+  });
+
+  it("should handle failed portfolio data fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/portfolio`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getPortfolio();
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
+    });
+  });
+
   it("should fetch supported tokens", async () => {
     axiosMock
       .onGet(`${baseUrl}/api/v1/supported/tokens`)
@@ -168,6 +216,20 @@ describe("OktoProvider", () => {
     await act(async () => {
       const tokensData = await okto.current.getSupportedTokens();
       expect(tokensData).toEqual(mockTokensData.data);
+    });
+  });
+
+  it("should handle failed supported tokens fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/supported/tokens`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getSupportedTokens();
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
     });
   });
 
@@ -184,6 +246,20 @@ describe("OktoProvider", () => {
     });
   });
 
+  it("should handle failed supported networks fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/supported/networks`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getSupportedNetworks();
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
+    });
+  });
+
   it("should fetch user details", async () => {
     axiosMock
       .onGet(`${baseUrl}/api/v1/user_from_token`)
@@ -194,6 +270,20 @@ describe("OktoProvider", () => {
     await act(async () => {
       const userData = await okto.current.getUserDetails();
       expect(userData).toEqual(mockUserData.data);
+    });
+  });
+
+  it("should handle failed user details fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/user_from_token`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getUserDetails();
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
     });
   });
 
@@ -210,6 +300,20 @@ describe("OktoProvider", () => {
     });
   });
 
+  it("should handle failed wallets fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/widget/wallet`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getWallets();
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
+    });
+  });
+
   it("should fetch order history", async () => {
     axiosMock.onGet(`${baseUrl}/api/v1/orders`).reply(200, mockOrderData);
 
@@ -218,6 +322,20 @@ describe("OktoProvider", () => {
     await act(async () => {
       const orderData = await okto.current.orderHistory({});
       expect(orderData).toEqual(mockOrderData.data);
+    });
+  });
+
+  it("should handle failed order history fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/orders`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.orderHistory({});
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
     });
   });
 
@@ -246,6 +364,36 @@ describe("OktoProvider", () => {
       expect(transferData).toEqual(mockTransferTokensData.data);
     });
   });
+  
+  it("should handle failed token transfer", async () => {
+    axiosMock.onPost(`${baseUrl}/api/v1/transfer/tokens/execute`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.transferTokens({});
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
+    });
+  });
+
+  it("should handle server failed for token transfer", async () => {
+    axiosMock
+      .onPost(`${baseUrl}/api/v1/transfer/tokens/execute`)
+      .reply(200, { status: "failed", data: mockTransferTokensData.data });
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.transferTokens({});
+      } catch (error) {
+        expect(error.message).toBe("Server responded with an error");
+      }
+    });
+  });
 
   it("should transfer NFT and return order details", async () => {
     axiosMock
@@ -257,6 +405,20 @@ describe("OktoProvider", () => {
     await act(async () => {
       const transferData = await okto.current.transferNft({});
       expect(transferData).toEqual(mockNftTransferData.data);
+    });
+  });
+
+  it("should handle failed NFT transfer", async () => {
+    axiosMock.onPost(`${baseUrl}/api/v1/nft/transfer`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.transferNft({});
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
     });
   });
 
@@ -273,6 +435,20 @@ describe("OktoProvider", () => {
     });
   });
 
+  it("should handle failed raw transaction execution", async () => {
+    axiosMock.onPost(`${baseUrl}/api/v1/rawtransaction/execute`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.executeRawTransaction({});
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
+    });
+  });
+
   it("should fetch raw transaction status", async () => {
     axiosMock
       .onGet(`${baseUrl}/api/v1/rawtransaction/status`)
@@ -283,6 +459,20 @@ describe("OktoProvider", () => {
     await act(async () => {
       const statusData = await okto.current.getRawTransactionStatus({});
       expect(statusData).toEqual(mockRawTransactionStatusData.data);
+    });
+  });
+
+  it("should handle failed raw transaction status fetch", async () => {
+    axiosMock.onGet(`${baseUrl}/api/v1/rawtransaction/status`).reply(500);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      try {
+        await okto.current.getRawTransactionStatus({});
+      } catch (error) {
+        expect(error.message).toBe("Request failed with status code 500");
+      }
     });
   });
 
@@ -345,9 +535,9 @@ describe("OktoProvider", () => {
         (x) => x.order_id
       );
       expect(order_ids).toContain(transactionData.order_id);
-      // expect(transactionData).toEqual(mockRawTransactionStatusData.data);
     });
   });
+
 
   // Theme Update Tests
   it("should set and get theme", async () => {
