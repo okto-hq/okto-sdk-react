@@ -108,7 +108,6 @@ export const OktoProvider = ({
     );
 
     return axiosInstanceTmp;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey, authDetails, baseUrl]);
 
   useEffect(() => {
@@ -321,7 +320,6 @@ export const OktoProvider = ({
             (order.status === OrderStatus.SUCCESS ||
               order.status === OrderStatus.FAILED)
           ) {
-            console.log("Found order: ", order);
             return order;
           }
           throw new Error(
@@ -353,7 +351,6 @@ export const OktoProvider = ({
           });
           const order = orderData.nfts.find((item) => item.id === orderId);
           if (order) {
-            console.log("Found order: ", order);
             return order;
           }
           throw new Error(
@@ -396,7 +393,6 @@ export const OktoProvider = ({
             (order.status === OrderStatus.SUCCESS ||
               order.status === OrderStatus.FAILED)
           ) {
-            console.log("Found order: ", order);
             return order;
           }
           throw new Error(
@@ -417,13 +413,11 @@ export const OktoProvider = ({
       try {
         return await findJobCallback(orderId);
       } catch (error) {
-        console.log("Waiting for order completion:", error);
+        /* empty */
       }
       await delay(JOB_RETRY_INTERVAL);
     }
-    throw new Error(
-      `Order with ID ${orderId} not found or not completed after ${JOB_MAX_RETRY * (JOB_RETRY_INTERVAL / 1000)} seconds. Returning failure.`,
-    );
+    throw new Error(`Order ID not found or not completed.`);
   }
 
   async function delay(ms: number) {
