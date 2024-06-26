@@ -118,6 +118,48 @@ describe("OktoProvider", () => {
     expect(storeJSONLocalStorage).not.toHaveBeenCalled();
   });
 
+  it("should authenticate with JWT and update auth details", async () => {
+    const userId = "userId";
+    const jwtToken = "jwt-token"
+    axiosMock
+      .onPost(`${baseUrl}/api/v1/jwt-authenticate`)
+      .reply(200, mockAuthenticateData);
+
+    getJSONLocalStorage.mockResolvedValue(null);
+
+    const okto = await getOktoContext();
+    await act(async () => {
+      await new Promise((resolve) => {
+        okto.current.authenticateWithUserId(userId, jwtToken, resolve);
+      });
+    });
+
+    expect(okto.current.isLoggedIn).toBe(true);
+    expect(storeJSONLocalStorage).toHaveBeenCalledWith(
+      expect.anything(),
+      mockAuthDetails
+    );
+  });
+
+  it("should handle failed authentication with JWT", async () => {
+    const userId = "userId";
+    const jwtToken = "jwt-token";
+    axiosMock.onPost(`${baseUrl}/api/v1/jwt-authenticate`).reply(401);
+
+    getJSONLocalStorage.mockResolvedValue(null);
+
+    const okto = await getOktoContext();
+
+    await act(async () => {
+      await new Promise((resolve) => {
+        okto.current.authenticateWithUserId(userId, jwtToken, resolve);
+      });
+    });
+
+    expect(okto.current.isLoggedIn).toBe(false);
+    expect(storeJSONLocalStorage).not.toHaveBeenCalled();
+  });
+
   // Refresh Token Tests
   it("should refresh token if invalid token expired", async () => {
     axiosMock

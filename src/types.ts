@@ -21,6 +21,11 @@ export interface OktoContextType {
     idToken: string,
     callback: (result: any, error: any) => void,
   ) => void;
+  authenticateWithUserId: (
+    userId: string,
+    jwtToken: string,
+    callback: (result: any, error: any) => void,
+  ) => void;
   logOut: () => void;
   getPortfolio(): Promise<PortfolioData>;
   getSupportedNetworks: () => Promise<NetworkData>;
