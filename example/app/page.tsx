@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { LoginButton } from "./components/LoginButton";
 import { useOkto, OktoContextType } from "okto-sdk-react";
@@ -21,11 +21,12 @@ export default function Home() {
     getUserDetails,
     orderHistory,
     getNftOrderDetails,
+    showWidgetModal,
   } = useOkto() as OktoContextType;
   const idToken = useMemo(() => (session ? session.id_token : null), [session]);
 
-  function handleAuthenticate(){
-     if (!idToken) {
+  function handleAuthenticate() {
+    if (!idToken) {
       return;
     }
     authenticate(idToken, (result: any, error: any) => {
@@ -39,17 +40,29 @@ export default function Home() {
     });
   }
 
-  useEffect(()=>{
-    if(isLoggedIn){
-      console.log("Okto is authenticated")
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log("Okto is authenticated");
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
 
   return (
     <main className="flex min-h-screen flex-col items-center space-y-5 p-24">
-      <div className="text-white font-bold text-2xl">Okto SDK API</div>
+      <div className="text-white font-bold text-2xl">Okto SDK</div>
       <LoginButton />
-      <GetButton title="Okto Authenticate" apiFn={async () => handleAuthenticate()} />
+      <button
+        className={`px-4 py-2 bg-blue-500 text-white rounded`}
+        onClick={() => {
+          showWidgetModal();
+        }}
+      >
+        Show Modal
+      </button>
+
+      <GetButton
+        title="Okto Authenticate"
+        apiFn={async () => handleAuthenticate()}
+      />
       <GetButton title="Okto Log out" apiFn={async () => logOut()} />
       <GetButton title="getPortfolio" apiFn={getPortfolio} />
       <GetButton title="getSupportedNetworks" apiFn={getSupportedNetworks} />

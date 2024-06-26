@@ -4,9 +4,8 @@ export enum BuildType {
   PRODUCTION = "PRODUCTION",
 }
 
-export enum BottomSheetType {
+export enum ModalType {
   WIDGET = "WIDGET",
-  PIN = "PIN",
 }
 
 export enum OrderStatus {
@@ -19,6 +18,11 @@ export interface OktoContextType {
   isLoggedIn: boolean;
   authenticate: (
     idToken: string,
+    callback: (result: any, error: any) => void,
+  ) => void;
+  authenticateWithUserId: (
+    userId: string,
+    jwtToken: string,
     callback: (result: any, error: any) => void,
   ) => void;
   logOut: () => void;
@@ -45,6 +49,8 @@ export interface OktoContextType {
   executeRawTransactionWithJobStatus(
     data: ExecuteRawTransaction,
   ): Promise<RawTransactionStatus>;
+  showWidgetModal: () => void;
+  closeModal: () => void;
   getTheme: () => Theme;
   setTheme: (theme: Partial<Theme>) => void;
 }
@@ -221,4 +227,9 @@ export interface Theme {
   strokDividerColor: string;
   surfaceColor: string;
   backgroundColor: string;
+}
+
+export interface ModalData {
+  theme: Theme;
+  authToken: string;
 }
