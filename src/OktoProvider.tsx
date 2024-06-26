@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useRef,
 } from "react";
 import {
   BuildType,
@@ -33,6 +34,7 @@ import {
   type WalletData,
   type ApiResponse,
   OrderStatus,
+  ModalType,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -44,6 +46,7 @@ import {
   defaultTheme,
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
+import { OktoModal } from "./components/OktoModal";
 
 const OktoContext = createContext<OktoContextType | null>(null);
 
@@ -56,6 +59,7 @@ export const OktoProvider = ({
   apiKey: string;
   buildType: BuildType;
 }) => {
+  const oktoModalRef = useRef<any>(null);
   const baseUrl = useMemo(() => baseUrls[buildType], [buildType]);
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
@@ -108,7 +112,6 @@ export const OktoProvider = ({
     );
 
     return axiosInstanceTmp;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey, authDetails, baseUrl]);
 
   useEffect(() => {
@@ -479,6 +482,17 @@ export const OktoProvider = ({
     updateAuthDetails(null);
   }
 
+  function showWidgetModal() {
+    oktoModalRef.current?.openModal(ModalType.WIDGET, {
+      theme,
+      authToken: authDetails?.authToken,
+    });
+  }
+
+  function closeModal() {
+    oktoModalRef.current?.closeModal();
+  }
+
   function setTheme(newTheme: Partial<Theme>) {
     updateTheme({ ...theme, ...newTheme });
   }
@@ -509,11 +523,14 @@ export const OktoProvider = ({
         transferTokensWithJobStatus,
         executeRawTransaction,
         executeRawTransactionWithJobStatus,
+        showWidgetModal,
+        closeModal,
         setTheme,
         getTheme,
       }}
     >
       {children}
+      <OktoModal ref={oktoModalRef} />
     </OktoContext.Provider>
   );
 };
