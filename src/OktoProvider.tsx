@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useRef,
 } from "react";
 import {
   BuildType,
@@ -33,6 +34,7 @@ import {
   type WalletData,
   type ApiResponse,
   OrderStatus,
+  ModalType,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -44,6 +46,7 @@ import {
   defaultTheme,
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
+import { OktoModal } from "./components/OktoModal";
 
 const OktoContext = createContext<OktoContextType | null>(null);
 
@@ -56,6 +59,7 @@ export const OktoProvider = ({
   apiKey: string;
   buildType: BuildType;
 }) => {
+  const oktoModalRef = useRef<any>(null);
   const baseUrl = useMemo(() => baseUrls[buildType], [buildType]);
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
@@ -108,7 +112,6 @@ export const OktoProvider = ({
     );
 
     return axiosInstanceTmp;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey, authDetails, baseUrl]);
 
   useEffect(() => {
@@ -194,6 +197,51 @@ export const OktoProvider = ({
           };
           updateAuthDetails(authDetailsNew);
         }
+        callback(response.data.data, null);
+      } else {
+        callback(null, new Error("Server responded with an error"));
+      }
+    } catch (error) {
+      callback(null, error);
+    }
+  }
+
+  async function authenticateWithUserId(
+    userId: string,
+    jwtToken: string,
+    callback: (result: any, error: any) => void,
+  ) {
+    if (!axiosInstance) {
+      return callback(null, new Error("SDK is not initialized"));
+    }
+
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/v1/jwt-authenticate`,
+        {
+          user_id: userId,
+          auth_token: jwtToken,
+        },
+        {
+          headers: {
+            Accept: "*/*",
+            "x-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (
+        response.status === 200 &&
+        response.data &&
+        response.data.status === "success"
+      ) {
+        const authDetailsNew: AuthDetails = {
+          authToken: response.data.data.auth_token,
+          refreshToken: response.data.data.refresh_auth_token,
+          deviceToken: response.data.data.device_token,
+        };
+        updateAuthDetails(authDetailsNew);
         callback(response.data.data, null);
       } else {
         callback(null, new Error("Server responded with an error"));
@@ -434,6 +482,17 @@ export const OktoProvider = ({
     updateAuthDetails(null);
   }
 
+  function showWidgetModal() {
+    oktoModalRef.current?.openModal(ModalType.WIDGET, {
+      theme,
+      authToken: authDetails?.authToken,
+    });
+  }
+
+  function closeModal() {
+    oktoModalRef.current?.closeModal();
+  }
+
   function setTheme(newTheme: Partial<Theme>) {
     updateTheme({ ...theme, ...newTheme });
   }
@@ -447,6 +506,7 @@ export const OktoProvider = ({
       value={{
         isLoggedIn,
         authenticate,
+        authenticateWithUserId,
         logOut,
         getPortfolio,
         getSupportedNetworks,
@@ -463,11 +523,14 @@ export const OktoProvider = ({
         transferTokensWithJobStatus,
         executeRawTransaction,
         executeRawTransactionWithJobStatus,
+        showWidgetModal,
+        closeModal,
         setTheme,
         getTheme,
       }}
     >
       {children}
+      <OktoModal ref={oktoModalRef} />
     </OktoContext.Provider>
   );
 };
