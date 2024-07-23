@@ -232,4 +232,19 @@ export interface Theme {
 export interface ModalData {
   theme: Theme;
   authToken: string;
+  environment: string;
+}
+
+export interface InjectData {
+  textPrimaryColor: string;
+  textSecondaryColor: string;
+  textTertiaryColor: string;
+  accentColor: string;
+  accent2Color: string;
+  strokBorderColor: string;
+  strokDividerColor: string;
+  surfaceColor: string;
+  backgroundColor: string;
+  ENVIRONMENT: string;
+  authToken: string;
 }

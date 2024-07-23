@@ -2,8 +2,23 @@ import React, { useRef, useEffect, useState } from "react";
 import styles from "./WidgetIframe.module.css";
 import Loading from "./Loading";
 import { widgetUrl } from "../constants";
-import { ModalData } from "../types";
+import { InjectData, ModalData } from "../types";
 
+function getInjectedData(modalData: ModalData): InjectData {
+  return {
+    textPrimaryColor: modalData.theme.textPrimaryColor,
+    textSecondaryColor: modalData.theme.textSecondaryColor,
+    textTertiaryColor: modalData.theme.textTertiaryColor,
+    accentColor: modalData.theme.accentColor,
+    accent2Color: modalData.theme.accent2Color,
+    strokBorderColor: modalData.theme.strokBorderColor,
+    strokDividerColor: modalData.theme.strokDividerColor,
+    surfaceColor: modalData.theme.surfaceColor,
+    backgroundColor: modalData.theme.backgroundColor,
+    ENVIRONMENT: modalData.environment,
+    authToken: modalData.authToken,
+  };
+}
 const WidgetIframe = ({
   modalData,
   onClose,
@@ -29,7 +44,7 @@ const WidgetIframe = ({
       if (iframe && iframe.contentWindow && modalData) {
         const message = {
           type: "FROM_PARENT",
-          data: modalData,
+          data: getInjectedData(modalData),
         };
         iframe.contentWindow.postMessage(message, widgetUrl);
       }

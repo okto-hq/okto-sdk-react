@@ -486,6 +486,7 @@ export const OktoProvider = ({
     oktoModalRef.current?.openModal(ModalType.WIDGET, {
       theme,
       authToken: authDetails?.authToken,
+      environment: buildType.toString(),
     });
   }
 
