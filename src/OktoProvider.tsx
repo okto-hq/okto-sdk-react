@@ -170,7 +170,7 @@ export const OktoProvider = ({
 
     try {
       const response = await axios.post(
-        `${baseUrl}/api/v1/authenticate`,
+        `${baseUrl}/api/v2/authenticate`,
         {
           id_token: idToken,
         },
