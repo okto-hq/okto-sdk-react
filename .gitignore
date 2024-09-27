@@ -67,3 +67,5 @@ build/
 .classpath
 .cproject
 .settings/
+
+.npmrc
