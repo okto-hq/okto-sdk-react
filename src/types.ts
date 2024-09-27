@@ -18,12 +18,12 @@ export interface OktoContextType {
   isLoggedIn: boolean;
   authenticate: (
     idToken: string,
-    callback: (result: any, error: any) => void,
+    callback: (result: any, error: any) => void
   ) => void;
   authenticateWithUserId: (
     userId: string,
     jwtToken: string,
-    callback: (result: any, error: any) => void,
+    callback: (result: any, error: any) => void
   ) => void;
   logOut: () => void;
   getPortfolio(): Promise<PortfolioData>;
@@ -33,10 +33,10 @@ export interface OktoContextType {
   getWallets: () => Promise<WalletData>;
   orderHistory: (query: Partial<OrderQuery>) => Promise<OrderData>;
   getNftOrderDetails(
-    query: Partial<NftOrderDetailsQuery>,
+    query: Partial<NftOrderDetailsQuery>
   ): Promise<NftOrderDetailsData>;
   getRawTransactionStatus(
-    query: RawTransactionStatusQuery,
+    query: RawTransactionStatusQuery
   ): Promise<RawTransactionStatusData>;
   createWallet: () => Promise<WalletData>;
   transferTokens: (data: TransferTokens) => Promise<TransferTokensData>;
@@ -44,10 +44,10 @@ export interface OktoContextType {
   transferNft: (data: TransferNft) => Promise<TransferNftData>;
   transferNftWithJobStatus(data: TransferNft): Promise<NftOrderDetails>;
   executeRawTransaction: (
-    data: ExecuteRawTransaction,
+    data: ExecuteRawTransaction
   ) => Promise<ExecuteRawTransactionData>;
   executeRawTransactionWithJobStatus(
-    data: ExecuteRawTransaction,
+    data: ExecuteRawTransaction
   ): Promise<RawTransactionStatus>;
   showWidgetModal: () => void;
   closeModal: () => void;
@@ -221,10 +221,10 @@ export interface Theme {
   textPrimaryColor: string;
   textSecondaryColor: string;
   textTertiaryColor: string;
-  accentColor: string;
+  accent1Color: string;
   accent2Color: string;
-  strokBorderColor: string;
-  strokDividerColor: string;
+  strokeBorderColor: string;
+  strokeDividerColor: string;
   surfaceColor: string;
   backgroundColor: string;
 }
@@ -239,10 +239,10 @@ export interface InjectData {
   textPrimaryColor: string;
   textSecondaryColor: string;
   textTertiaryColor: string;
-  accentColor: string;
+  accent1Color: string;
   accent2Color: string;
-  strokBorderColor: string;
-  strokDividerColor: string;
+  strokeBorderColor: string;
+  strokeDividerColor: string;
   surfaceColor: string;
   backgroundColor: string;
   ENVIRONMENT: string;
