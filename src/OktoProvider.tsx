@@ -309,7 +309,7 @@ export const OktoProvider = ({
   }
 
   async function getWallets(): Promise<WalletData> {
-    return makeGetRequest<WalletData>("/v1/widget/wallet");
+    return makeGetRequest<WalletData>("/v1/wallet");
   }
 
   async function orderHistory(query: Partial<OrderQuery>): Promise<OrderData> {
