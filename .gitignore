@@ -69,3 +69,5 @@ build/
 .settings/
 
 .npmrc
+
+*.tgz

@@ -18,12 +18,12 @@ export interface OktoContextType {
   isLoggedIn: boolean;
   authenticate: (
     idToken: string,
-    callback: (result: any, error: any) => void
+    callback: (result: any, error: any) => void,
   ) => void;
   authenticateWithUserId: (
     userId: string,
     jwtToken: string,
-    callback: (result: any, error: any) => void
+    callback: (result: any, error: any) => void,
   ) => void;
   logOut: () => void;
   getPortfolio(): Promise<PortfolioData>;
@@ -33,10 +33,10 @@ export interface OktoContextType {
   getWallets: () => Promise<WalletData>;
   orderHistory: (query: Partial<OrderQuery>) => Promise<OrderData>;
   getNftOrderDetails(
-    query: Partial<NftOrderDetailsQuery>
+    query: Partial<NftOrderDetailsQuery>,
   ): Promise<NftOrderDetailsData>;
   getRawTransactionStatus(
-    query: RawTransactionStatusQuery
+    query: RawTransactionStatusQuery,
   ): Promise<RawTransactionStatusData>;
   createWallet: () => Promise<WalletData>;
   transferTokens: (data: TransferTokens) => Promise<TransferTokensData>;
@@ -44,15 +44,31 @@ export interface OktoContextType {
   transferNft: (data: TransferNft) => Promise<TransferNftData>;
   transferNftWithJobStatus(data: TransferNft): Promise<NftOrderDetails>;
   executeRawTransaction: (
-    data: ExecuteRawTransaction
+    data: ExecuteRawTransaction,
   ) => Promise<ExecuteRawTransactionData>;
   executeRawTransactionWithJobStatus(
-    data: ExecuteRawTransaction
+    data: ExecuteRawTransaction,
   ): Promise<RawTransactionStatus>;
   showWidgetModal: () => void;
   closeModal: () => void;
   getTheme: () => Theme;
   setTheme: (theme: Partial<Theme>) => void;
+  sendEmailOTP: (email: string) => Promise<SendOTPResponse>;
+  verifyEmailOTP: (
+    email: string,
+    otp: string,
+    token: string,
+  ) => Promise<boolean>;
+  sendPhoneOTP: (
+    phoneNumber: string,
+    countryShortName: string,
+  ) => Promise<SendOTPResponse>;
+  verifyPhoneOTP: (
+    phoneNumber: string,
+    countryShortName: string,
+    otp: string,
+    token: string,
+  ) => Promise<boolean>;
 }
 
 export interface ApiResponse<T> {
@@ -247,4 +263,26 @@ export interface InjectData {
   backgroundColor: string;
   ENVIRONMENT: string;
   authToken: string;
+}
+
+export interface SendOTPResponse {
+  status: string;
+  message: string;
+  code: number;
+  token: string;
+  trace_id: string;
+}
+
+export interface VerifyEmailOTPRequest {
+  email: string;
+  otp: string;
+  token: string;
+}
+
+export interface OTPAuthResponse {
+  auth_token: string;
+  message: string;
+  refresh_auth_token: string;
+  device_token: string;
+  trace_id: string;
 }

@@ -35,6 +35,8 @@ import {
   type ApiResponse,
   OrderStatus,
   ModalType,
+  SendOTPResponse,
+  OTPAuthResponse,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -477,6 +479,78 @@ export const OktoProvider = ({
     updateAuthDetails(null);
   }
 
+  async function sendEmailOTP(email: string): Promise<SendOTPResponse> {
+    return makePostRequest<SendOTPResponse>("/v1/authenticate/email", {
+      email,
+    });
+  }
+
+  async function verifyEmailOTP(
+    email: string,
+    otp: string,
+    token: string,
+  ): Promise<boolean> {
+    try {
+      const response = await makePostRequest<OTPAuthResponse>(
+        "/v1/authenticate/email/verify",
+        { email, otp, token },
+      );
+      if (response.message === "success") {
+        const authDetails: AuthDetails = {
+          authToken: response.auth_token,
+          refreshToken: response.refresh_auth_token,
+          deviceToken: response.device_token,
+        };
+        updateAuthDetails(authDetails);
+        return true;
+      }
+    } catch (error) {
+      return false;
+    }
+    return false;
+  }
+
+  async function sendPhoneOTP(
+    phoneNumber: string,
+    countryShortName: string,
+  ): Promise<SendOTPResponse> {
+    return makePostRequest<SendOTPResponse>("/v1/authenticate/phone", {
+      phone_number: phoneNumber,
+      country_short_name: countryShortName,
+    });
+  }
+
+  async function verifyPhoneOTP(
+    phoneNumber: string,
+    countryShortName: string,
+    otp: string,
+    token: string,
+  ): Promise<boolean> {
+    try {
+      const response = await makePostRequest<OTPAuthResponse>(
+        "/v1/authenticate/phone/verify",
+        {
+          phone_number: phoneNumber,
+          country_short_name: countryShortName,
+          otp,
+          token,
+        },
+      );
+      if (response.message === "success") {
+        const authDetails: AuthDetails = {
+          authToken: response.auth_token,
+          refreshToken: response.refresh_auth_token,
+          deviceToken: response.device_token,
+        };
+        updateAuthDetails(authDetails);
+        return true;
+      }
+    } catch (error) {
+      return false;
+    }
+    return false;
+  }
+
   function showWidgetModal() {
     oktoModalRef.current?.openModal(ModalType.WIDGET, {
       theme,
@@ -523,6 +597,10 @@ export const OktoProvider = ({
         closeModal,
         setTheme,
         getTheme,
+        sendEmailOTP,
+        verifyEmailOTP,
+        sendPhoneOTP,
+        verifyPhoneOTP,
       }}
     >
       {children}
