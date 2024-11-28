@@ -37,6 +37,7 @@ import {
   ModalType,
   SendOTPResponse,
   OTPAuthResponse,
+  AuthType,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -49,6 +50,7 @@ import {
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
 import { OktoModal } from "./components/OktoModal";
+import { OnboardingModal } from "./components/OnboardingModal";
 
 const OktoContext = createContext<OktoContextType | null>(null);
 
@@ -56,12 +58,15 @@ export const OktoProvider = ({
   children,
   apiKey,
   buildType,
+  gAuthCb,
 }: {
   children: ReactNode;
   apiKey: string;
   buildType: BuildType;
+  gAuthCb?: () => Promise<string>;
 }) => {
   const oktoModalRef = useRef<any>(null);
+  const onboardingModalRef = useRef<any>(null);
   const baseUrl = useMemo(() => baseUrls[buildType], [buildType]);
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
@@ -559,6 +564,23 @@ export const OktoProvider = ({
     });
   }
 
+  function showOnboardingModal(
+    primaryAuth: AuthType = AuthType.EMAIL,
+    title: string = "",
+    subtitle: string = "",
+    iconUrl: string = "",
+  ) {
+    onboardingModalRef.current?.openModal({
+      theme,
+      apiKey,
+      environment: buildType.toString(),
+      primaryAuthType: primaryAuth,
+      brandTitle: title,
+      brandSubtitle: subtitle,
+      brandIconUrl: iconUrl,
+    });
+  }
+
   function closeModal() {
     oktoModalRef.current?.closeModal();
   }
@@ -594,6 +616,7 @@ export const OktoProvider = ({
         executeRawTransaction,
         executeRawTransactionWithJobStatus,
         showWidgetModal,
+        showOnboardingModal,
         closeModal,
         setTheme,
         getTheme,
@@ -605,6 +628,11 @@ export const OktoProvider = ({
     >
       {children}
       <OktoModal ref={oktoModalRef} />
+      <OnboardingModal
+        ref={onboardingModalRef}
+        updateAuthCb={updateAuthDetails}
+        gAuthCb={gAuthCb ? gAuthCb : async () => ""}
+      />
     </OktoContext.Provider>
   );
 };

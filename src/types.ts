@@ -6,12 +6,19 @@ export enum BuildType {
 
 export enum ModalType {
   WIDGET = "WIDGET",
+  ONBOARDING = "ONBOARDING",
 }
 
 export enum OrderStatus {
   SUCCESS = "SUCCESS",
   FAILED = "FAILED",
   PENDING = "PENDING",
+}
+
+export enum AuthType {
+  PHONE = "Phone",
+  EMAIL = "Email",
+  GAUTH = "GAuth",
 }
 
 export interface OktoContextType {
@@ -50,6 +57,12 @@ export interface OktoContextType {
     data: ExecuteRawTransaction,
   ): Promise<RawTransactionStatus>;
   showWidgetModal: () => void;
+  showOnboardingModal: (
+    primaryAuth?: AuthType,
+    title?: string,
+    subtitle?: string,
+    iconUrl?: string,
+  ) => void;
   closeModal: () => void;
   getTheme: () => Theme;
   setTheme: (theme: Partial<Theme>) => void;
@@ -249,6 +262,16 @@ export interface ModalData {
   theme: Theme;
   authToken: string;
   environment: string;
+}
+
+export interface OnboardingModalData {
+  theme: Theme;
+  apiKey: string;
+  environment: string;
+  primaryAuthType: AuthType;
+  brandTitle: string;
+  brandSubtitle: string;
+  brandIconUrl: string;
 }
 
 export interface InjectData {
