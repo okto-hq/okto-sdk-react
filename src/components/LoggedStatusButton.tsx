@@ -1,27 +1,33 @@
-import React, { useContext } from "react";
-import { OktoContext } from "../OktoProvider";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+import styles from "./LoggedStatusButton.module.css";
 
-const LoggedStatusButton: React.FC = () => {
-  const context = useContext(OktoContext);
+interface StatusButtonRef {
+  toggleStatus: () => void;
+}
 
-  if (!context) {
-    return null;
-  }
+const LoggedStatusButton: React.FC<{}> = forwardRef((_, ref) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const { isLoggedIn } = context;
+  const toggleStatus = () => {
+    setIsLoggedIn((prevStatus) => !prevStatus);
+  };
+
+  useImperativeHandle(ref, () => ({
+    toggleStatus,
+  }));
 
   return (
-    <div className="flex items-center gap-2 bg-white rounded-lg px-4 py-2 shadow-sm">
+    <div className={styles.buttonContainer}>
       <div
-        className={`w-3 h-3 rounded-full ${
-          isLoggedIn ? "bg-green-500" : "bg-red-500"
+        className={`${styles.statusIndicator} ${
+          isLoggedIn ? styles.online : styles.offline
         }`}
       ></div>
-      <span className="text-sm font-medium">
+      <span className={styles.statusText}>
         Status: {isLoggedIn ? "Logged In" : "Not Logged In"}
       </span>
     </div>
   );
-};
+});
 
 export default LoggedStatusButton;
