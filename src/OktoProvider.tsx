@@ -51,8 +51,9 @@ import {
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
 import { OktoModal } from "./components/OktoModal";
 import { OnboardingModal } from "./components/OnboardingModal";
+import LoggedStatusButton from "./components/LoggedStatusButton";
 
-const OktoContext = createContext<OktoContextType | null>(null);
+export const OktoContext = createContext<OktoContextType | null>(null);
 
 export const OktoProvider = ({
   children,
@@ -596,6 +597,7 @@ export const OktoProvider = ({
   return (
     <OktoContext.Provider
       value={{
+        LoggedStatusButton,
         isLoggedIn,
         authenticate,
         authenticateWithUserId,
