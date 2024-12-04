@@ -264,6 +264,12 @@ export interface ModalData {
   environment: string;
 }
 
+export interface BrandData {
+  title: string;
+  subtitle: string;
+  iconUrl: string;
+}
+
 export interface OnboardingModalData {
   theme: Theme;
   apiKey: string;

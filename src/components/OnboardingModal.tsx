@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { AuthDetails, OnboardingModalData } from "../types";
+import { AuthDetails, AuthType, BuildType, BrandData, Theme } from "../types";
 import OnboardingIframe from "./OnboardingIframe";
 
 // eslint-disable-next-line no-empty-pattern
@@ -7,20 +7,30 @@ const _OnboardingModal = (
   {
     updateAuthCb,
     gAuthCb,
+    buildType,
+    apiKey,
+    brandData,
+    primaryAuth,
+    theme,
   }: {
     updateAuthCb: (authDetails: AuthDetails) => void;
     gAuthCb: () => Promise<string>;
+    buildType: BuildType;
+    apiKey: string;
+    brandData: BrandData;
+    primaryAuth: AuthType;
+    theme: Theme;
   },
   ref: any,
 ) => {
-  const [modalData, setModalData] = useState<OnboardingModalData | null>(null);
+  const [visible, setVisible] = useState(false);
 
-  const openModal = (onboardingModalData: OnboardingModalData | null) => {
-    setModalData(onboardingModalData);
+  const openModal = () => {
+    setVisible(true);
   };
 
   const closeModal = () => {
-    setModalData(null);
+    setVisible(false);
   };
 
   useImperativeHandle(ref, () => ({
@@ -32,16 +42,17 @@ const _OnboardingModal = (
     closeModal();
   }
 
-  if (!modalData) {
-    return null;
-  }
-
   return (
     <OnboardingIframe
-      modalData={modalData}
+      visible={visible}
       onClose={handleClose}
       updateAuthCb={updateAuthCb}
       gAuthCb={gAuthCb}
+      buildType={buildType}
+      apiKey={apiKey}
+      brandData={brandData}
+      primaryAuth={primaryAuth}
+      theme={theme}
     />
   );
 };

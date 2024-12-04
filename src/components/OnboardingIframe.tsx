@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import styles from "./OnboardingIframe.module.css";
-import { onBoardingUrls } from "../constants";
-import { AuthDetails, BuildType, OnboardingModalData } from "../types";
+import { oktoLogo, onBoardingUrls } from "../constants";
+import { AuthDetails, AuthType, BrandData, BuildType, Theme } from "../types";
+import { CrossIcon } from "./Icon";
 
 export interface InjectData {
   textPrimaryColor: string;
@@ -21,39 +22,56 @@ export interface InjectData {
   brandIconUrl: string;
 }
 
-function getInjectedData(modalData: OnboardingModalData): InjectData {
+function getInjectedData(
+  buildType: BuildType,
+  apiKey: string,
+  brandData: BrandData,
+  primaryAuth: AuthType,
+  theme: Theme,
+): InjectData {
   return {
-    textPrimaryColor: modalData.theme.textPrimaryColor,
-    textSecondaryColor: modalData.theme.textSecondaryColor,
-    textTertiaryColor: modalData.theme.textTertiaryColor,
-    accent1Color: modalData.theme.accent1Color,
-    accent2Color: modalData.theme.accent2Color,
-    strokeBorderColor: modalData.theme.strokeBorderColor,
-    strokeDividerColor: modalData.theme.strokeDividerColor,
-    surfaceColor: modalData.theme.surfaceColor,
-    backgroundColor: modalData.theme.backgroundColor,
-    ENVIRONMENT: modalData.environment,
-    API_KEY: modalData.apiKey,
-    primaryAuthType: modalData.primaryAuthType.toString(),
-    brandTitle: modalData.brandTitle,
-    brandSubtitle: modalData.brandSubtitle,
-    brandIconUrl: modalData.brandIconUrl,
+    textPrimaryColor: theme.textPrimaryColor,
+    textSecondaryColor: theme.textSecondaryColor,
+    textTertiaryColor: theme.textTertiaryColor,
+    accent1Color: theme.accent1Color,
+    accent2Color: theme.accent2Color,
+    strokeBorderColor: theme.strokeBorderColor,
+    strokeDividerColor: theme.strokeDividerColor,
+    surfaceColor: theme.surfaceColor,
+    backgroundColor: theme.backgroundColor,
+    ENVIRONMENT: buildType.toString(),
+    API_KEY: apiKey,
+    primaryAuthType: primaryAuth.toString(),
+    brandTitle: brandData.title,
+    brandSubtitle: brandData.subtitle,
+    brandIconUrl: brandData.iconUrl,
   };
 }
+
 const OnboardingIframe = ({
-  modalData,
+  visible,
   onClose,
   updateAuthCb,
   gAuthCb,
+  buildType,
+  apiKey,
+  brandData,
+  primaryAuth,
+  theme,
 }: {
-  modalData: OnboardingModalData;
+  visible: boolean;
   onClose: () => void;
   updateAuthCb: (authDetails: AuthDetails) => void;
   gAuthCb: () => Promise<string>;
+  buildType: BuildType;
+  apiKey: string;
+  brandData: BrandData;
+  primaryAuth: AuthType;
+  theme: Theme;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const widgetUrl = onBoardingUrls[modalData.environment as BuildType];
+  const widgetUrl = onBoardingUrls[buildType];
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -65,15 +83,21 @@ const OnboardingIframe = ({
       onLoad();
     };
     function onLoad() {
-      if (iframe && iframe.contentWindow && modalData) {
+      if (iframe && iframe.contentWindow) {
         const message = {
           type: "FROM_PARENT",
-          data: getInjectedData(modalData),
+          data: getInjectedData(
+            buildType,
+            apiKey,
+            brandData,
+            primaryAuth,
+            theme,
+          ),
         };
         iframe.contentWindow.postMessage(message, widgetUrl);
       }
     }
-  }, []);
+  }, [buildType, apiKey, brandData, primaryAuth, theme]);
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
@@ -105,6 +129,7 @@ const OnboardingIframe = ({
             deviceToken: authData.device_token,
           };
           updateAuthCb(authDetails);
+          onClose();
         }
       } catch (error) {
         console.error("Error parsing okto widget data", error);
@@ -118,15 +143,43 @@ const OnboardingIframe = ({
     };
   }, []);
 
+  const iframeKey = useMemo(
+    () =>
+      btoa(
+        encodeURIComponent(
+          JSON.stringify({
+            buildType,
+            apiKey,
+            brandData,
+            primaryAuth,
+            theme,
+          }),
+        ),
+      ),
+    [buildType, apiKey, brandData, primaryAuth, theme],
+  );
+
   return (
     <div
-      className={`${styles.modalOverlay} ${modalData ? "" : styles.hidden}`}
+      className={`${styles.modalOverlay} ${visible ? "" : styles.hidden}`}
       onClick={onClose}
     >
       <div className={styles.modalContainer}>
         <div className={styles.modalContent}>
           <div className={styles.container}>
+            <div className={styles.modalHeader}>
+              <div className={styles.logoContainer}>
+                <img src={oktoLogo} height={24} width={24} alt="logo" />
+                <div className={styles.headerText}>Okto Wallet</div>
+              </div>
+              <div className={styles.iconContainer}>
+                <button className={styles.closeButton}>
+                  <CrossIcon color="#FFFFFF" />
+                </button>
+              </div>
+            </div>
             <iframe
+              key={iframeKey}
               ref={iframeRef}
               src={widgetUrl}
               className={styles.iframe}

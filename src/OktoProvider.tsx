@@ -38,6 +38,7 @@ import {
   SendOTPResponse,
   OTPAuthResponse,
   AuthType,
+  BrandData,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -46,6 +47,7 @@ import {
   JOB_MAX_RETRY,
   JOB_RETRY_INTERVAL,
   baseUrls,
+  defaultBrandData,
   defaultTheme,
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
@@ -59,11 +61,15 @@ export const OktoProvider = ({
   apiKey,
   buildType,
   gAuthCb,
+  primaryAuth = AuthType.EMAIL,
+  brandData = defaultBrandData,
 }: {
   children: ReactNode;
   apiKey: string;
   buildType: BuildType;
   gAuthCb?: () => Promise<string>;
+  primaryAuth?: AuthType;
+  brandData?: BrandData;
 }) => {
   const oktoModalRef = useRef<any>(null);
   const onboardingModalRef = useRef<any>(null);
@@ -564,21 +570,8 @@ export const OktoProvider = ({
     });
   }
 
-  function showOnboardingModal(
-    primaryAuth: AuthType = AuthType.EMAIL,
-    title: string = "",
-    subtitle: string = "",
-    iconUrl: string = "",
-  ) {
-    onboardingModalRef.current?.openModal({
-      theme,
-      apiKey,
-      environment: buildType.toString(),
-      primaryAuthType: primaryAuth,
-      brandTitle: title,
-      brandSubtitle: subtitle,
-      brandIconUrl: iconUrl,
-    });
+  function showOnboardingModal() {
+    onboardingModalRef.current?.openModal();
   }
 
   function closeModal() {
@@ -632,6 +625,11 @@ export const OktoProvider = ({
         ref={onboardingModalRef}
         updateAuthCb={updateAuthDetails}
         gAuthCb={gAuthCb ? gAuthCb : async () => ""}
+        buildType={buildType}
+        apiKey={apiKey}
+        brandData={brandData}
+        primaryAuth={primaryAuth}
+        theme={theme}
       />
     </OktoContext.Provider>
   );
