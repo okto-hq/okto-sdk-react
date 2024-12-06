@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import styles from "./OnboardingIframe.module.css";
 import { oktoLogo, onBoardingUrls } from "../constants";
 import { AuthDetails, AuthType, BrandData, BuildType, Theme } from "../types";
@@ -70,8 +70,54 @@ const OnboardingIframe = ({
   theme: Theme;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   const widgetUrl = onBoardingUrls[buildType];
+
+  const refreshIframe = () => {
+    setRefreshNonce(refreshNonce + 1);
+  };
+
+  const handleClose = () => {
+    onClose();
+    refreshIframe();
+  };
+
+  const handleMessage = async (event: MessageEvent) => {
+    try {
+      const message = JSON.parse(event.data);
+      if (message.type === "go_back") {
+        handleClose();
+      } else if (message.type === "g_auth") {
+        //handle google auth
+        const idToken = await gAuthCb();
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ type: "g_auth", data: idToken }),
+          widgetUrl,
+        );
+      } else if (message.type === "copy_text") {
+        //handle copy text
+        const clipboardText = await navigator.clipboard.readText();
+        const trimmedText = clipboardText.trim();
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ type: "copy_text", data: trimmedText }),
+          widgetUrl,
+        );
+      } else if (message.type === "auth_success") {
+        //handle auth success
+        const authData = message.data;
+        const authDetails: AuthDetails = {
+          authToken: authData.auth_token,
+          refreshToken: authData.refresh_auth_token,
+          deviceToken: authData.device_token,
+        };
+        updateAuthCb(authDetails);
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error parsing okto widget data", error);
+    }
+  };
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -97,51 +143,13 @@ const OnboardingIframe = ({
         iframe.contentWindow.postMessage(message, widgetUrl);
       }
     }
-  }, [buildType, apiKey, brandData, primaryAuth, theme]);
-
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === "go_back") {
-          onClose();
-        } else if (message.type === "g_auth") {
-          //handle google auth
-          const idToken = await gAuthCb();
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ type: "g_auth", data: idToken }),
-            widgetUrl,
-          );
-        } else if (message.type === "copy_text") {
-          //handle copy text
-          const clipboardText = await navigator.clipboard.readText();
-          const trimmedText = clipboardText.trim();
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ type: "copy_text", data: trimmedText }),
-            widgetUrl,
-          );
-        } else if (message.type === "auth_success") {
-          //handle auth success
-          const authData = message.data;
-          const authDetails: AuthDetails = {
-            authToken: authData.auth_token,
-            refreshToken: authData.refresh_auth_token,
-            deviceToken: authData.device_token,
-          };
-          updateAuthCb(authDetails);
-          onClose();
-        }
-      } catch (error) {
-        console.error("Error parsing okto widget data", error);
-      }
-    };
 
     window.addEventListener("message", handleMessage);
 
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [buildType, apiKey, brandData, primaryAuth, theme]);
 
   const iframeKey = useMemo(
     () =>
@@ -153,16 +161,17 @@ const OnboardingIframe = ({
             brandData,
             primaryAuth,
             theme,
+            refreshNonce,
           }),
         ),
       ),
-    [buildType, apiKey, brandData, primaryAuth, theme],
+    [buildType, apiKey, brandData, primaryAuth, theme, refreshNonce],
   );
 
   return (
     <div
       className={`${styles.modalOverlay} ${visible ? "" : styles.hidden}`}
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div className={styles.modalContainer}>
         <div className={styles.modalContent}>
