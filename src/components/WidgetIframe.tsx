@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import styles from "./WidgetIframe.module.css";
-import Loading from "./Loading";
 import { widgetUrl } from "../constants";
 import { InjectData, ModalData } from "../types";
 
@@ -28,8 +27,6 @@ const WidgetIframe = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const iframe = iframeRef.current;
 
@@ -40,7 +37,6 @@ const WidgetIframe = ({
       onLoad();
     };
     function onLoad() {
-      console.log(modalData);
       if (iframe && iframe.contentWindow && modalData) {
         const message = {
           type: "FROM_PARENT",
@@ -48,7 +44,6 @@ const WidgetIframe = ({
         };
         iframe.contentWindow.postMessage(message, widgetUrl);
       }
-      setLoading(false);
     }
   }, []);
 
@@ -73,12 +68,11 @@ const WidgetIframe = ({
 
   return (
     <div className={styles.container}>
-      {loading && <Loading />}
       <iframe
         ref={iframeRef}
         src={widgetUrl}
         className={styles.iframe}
-        loading="lazy"
+        loading="eager"
       ></iframe>
     </div>
   );
