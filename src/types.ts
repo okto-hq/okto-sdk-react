@@ -82,6 +82,10 @@ export interface OktoContextType {
     otp: string,
     token: string,
   ) => Promise<boolean>;
+  readContractData: (
+    network_name: string,
+    data: ContractReadData,
+  ) => Promise<any>;
 }
 
 export interface ApiResponse<T> {
@@ -315,3 +319,9 @@ export interface OTPAuthResponse {
   device_token: string;
   trace_id: string;
 }
+
+export type ContractReadData = {
+  contractAddress: string;
+  abi: any;
+  args: Record<string, any>;
+};

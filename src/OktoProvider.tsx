@@ -39,6 +39,7 @@ import {
   OTPAuthResponse,
   AuthType,
   BrandData,
+  ContractReadData,
 } from "./types";
 import axios from "axios";
 import { getQueryString } from "./utils/query-helpers";
@@ -586,6 +587,20 @@ export const OktoProvider = ({
     return theme;
   }
 
+  async function readContractData(
+    network_name: string,
+    data: ContractReadData,
+  ): Promise<any> {
+    return makePostRequest<any>("/v1/readContractData", {
+      network_name: network_name,
+      data: {
+        contractAddress: data.contractAddress,
+        abi: data.abi,
+        args: data.args,
+      },
+    });
+  }
+
   return (
     <OktoContext.Provider
       value={{
@@ -617,6 +632,7 @@ export const OktoProvider = ({
         verifyEmailOTP,
         sendPhoneOTP,
         verifyPhoneOTP,
+        readContractData,
       }}
     >
       {children}
