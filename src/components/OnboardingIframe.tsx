@@ -85,7 +85,12 @@ const OnboardingIframe = ({
 
   const handleMessage = async (event: MessageEvent) => {
     try {
-      const message = JSON.parse(event.data);
+      let message;
+      try {
+        message = JSON.parse(event.data);
+      } catch (error) {
+        return;
+      }
       if (message.type === "go_back") {
         handleClose();
       } else if (message.type === "g_auth") {
