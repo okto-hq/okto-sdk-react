@@ -22,6 +22,7 @@ export enum AuthType {
 }
 
 export interface OktoContextType {
+  LoggedStatusButton: React.FC;
   isLoggedIn: boolean;
   authenticate: (
     idToken: string,
