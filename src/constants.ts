@@ -1,4 +1,4 @@
-import { BuildType, type Theme } from "./types";
+import { BuildType, type Theme, type BrandData } from "./types";
 
 export const baseUrls = {
   [BuildType.PRODUCTION]: "https://apigw.okto.tech",
@@ -11,6 +11,9 @@ export const onBoardingUrls = {
   [BuildType.STAGING]: "https://3p.oktostage.com/#/login_screen",
   [BuildType.SANDBOX]: "https://okto-sandbox.firebaseapp.com/#/login_screen",
 };
+
+export const oktoLogo =
+  "https://okto-sandbox.firebaseapp.com/assets/assets/png_assets/Okto.png";
 
 export const widgetUrl = "https://3p.okto.tech";
 
@@ -26,6 +29,12 @@ export const defaultTheme: Theme = {
   strokeDividerColor: "0x4DA8A8A8",
   surfaceColor: "0xFF1F0A2F",
   backgroundColor: "0xFF000000",
+};
+
+export const defaultBrandData: BrandData = {
+  title: "",
+  subtitle: "",
+  iconUrl: "",
 };
 
 export const JOB_RETRY_INTERVAL = 5000; //5s

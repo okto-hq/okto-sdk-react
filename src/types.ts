@@ -83,6 +83,7 @@ export interface OktoContextType {
     otp: string,
     token: string,
   ) => Promise<boolean>;
+  readContractData: (network_name: string, data: any) => Promise<any>;
 }
 
 export interface ApiResponse<T> {
@@ -265,6 +266,12 @@ export interface ModalData {
   environment: string;
 }
 
+export interface BrandData {
+  title: string;
+  subtitle: string;
+  iconUrl: string;
+}
+
 export interface OnboardingModalData {
   theme: Theme;
   apiKey: string;
@@ -310,3 +317,9 @@ export interface OTPAuthResponse {
   device_token: string;
   trace_id: string;
 }
+
+export type ContractReadData = {
+  contractAddress: string;
+  abi: any;
+  args: Record<string, any>;
+};

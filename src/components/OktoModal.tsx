@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import WidgetIframe from "./WidgetIframe";
 import { ModalType, ModalData } from "../types";
-import styles from "./OktoModal.module.css";
+import styles from "./OnboardingIframe.module.css";
 
 // eslint-disable-next-line no-empty-pattern
 const _OktoModal = ({}: object, ref: any) => {
@@ -38,9 +38,11 @@ const _OktoModal = ({}: object, ref: any) => {
     >
       <div className={styles.modalContainer}>
         <div className={styles.modalContent}>
-          {currentScreen === ModalType.WIDGET && (
-            <WidgetIframe modalData={modalData} onClose={handleClose} />
-          )}
+          <div className={styles.container}>
+            {currentScreen === ModalType.WIDGET && (
+              <WidgetIframe modalData={modalData} onClose={handleClose} />
+            )}
+          </div>
         </div>
       </div>
     </div>
