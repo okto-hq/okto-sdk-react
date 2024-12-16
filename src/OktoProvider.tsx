@@ -272,6 +272,10 @@ export const OktoProvider = ({
       throw new Error("SDK is not initialized");
     }
 
+    if (!isLoggedIn) {
+      throw new Error("User is not logged in");
+    }
+
     const url = queryUrl ? `${endpoint}?${queryUrl}` : endpoint;
     try {
       const response = await axiosInstance.get<ApiResponse<T>>(url);
@@ -291,6 +295,10 @@ export const OktoProvider = ({
   ): Promise<T> {
     if (!axiosInstance) {
       throw new Error("SDK is not initialized");
+    }
+
+    if (!isLoggedIn) {
+      throw new Error("User is not logged in");
     }
 
     try {
