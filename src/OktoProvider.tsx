@@ -54,7 +54,7 @@ import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
 import { OktoModal } from "./components/OktoModal";
 import { OnboardingModal } from "./components/OnboardingModal";
 
-const OktoContext = createContext<OktoContextType | null>(null);
+const OktoContext = createContext<OktoContextType>(null!);
 
 /**
  * Provider component for Okto SDK functionality
@@ -732,6 +732,12 @@ export const OktoProvider = ({
 /**
  * Hook to access Okto SDK functionality
  *
- * @returns {OktoContextType | null} Okto context value
+ * @returns {OktoContextType} Okto context value
  */
-export const useOkto = () => useContext(OktoContext);
+export const useOkto = () => {
+  const context = useContext(OktoContext);
+  if (context === null) {
+    throw new Error("useOkto must be used within an OktoProvider");
+  }
+  return context;
+};
