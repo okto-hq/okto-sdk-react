@@ -22,6 +22,7 @@ export enum AuthType {
 }
 
 export interface OktoContextType {
+  isReady: boolean;
   isLoggedIn: boolean;
   authenticate: (
     idToken: string,

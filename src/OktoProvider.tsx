@@ -77,6 +77,7 @@ export const OktoProvider = ({
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
   const isLoggedIn = useMemo(() => authDetails !== null, [authDetails]);
+  const [isReady, setIsReady] = useState(false);
 
   const axiosInstance = useMemo(() => {
     const axiosInstanceTmp = axios.create({
@@ -134,6 +135,7 @@ export const OktoProvider = ({
   async function updateAuthDetailsFromStorage() {
     const storedAuthDetails = await getJSONLocalStorage(AUTH_DETAILS_KEY);
     setAuthDetails(storedAuthDetails);
+    setIsReady(true);
   }
 
   async function updateAuthDetails(authDetailsNew: AuthDetails | null) {
@@ -608,6 +610,7 @@ export const OktoProvider = ({
     <OktoContext.Provider
       value={{
         isLoggedIn,
+        isReady,
         authenticate,
         authenticateWithUserId,
         logOut,
