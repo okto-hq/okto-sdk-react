@@ -54,8 +54,19 @@ import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
 import { OktoModal } from "./components/OktoModal";
 import { OnboardingModal } from "./components/OnboardingModal";
 
-const OktoContext = createContext<OktoContextType | null>(null);
+const OktoContext = createContext<OktoContextType>(null!);
 
+/**
+ * Provider component for Okto SDK functionality
+ *
+ * @param {Object} props - Provider props
+ * @param {ReactNode} props.children - Child components
+ * @param {string} props.apiKey - API key for Okto
+ * @param {BuildType} props.buildType - Build environment type
+ * @param {() => Promise<string>} [props.gAuthCb] - Optional callback for Google authentication
+ * @param {AuthType} [props.primaryAuth=AuthType.EMAIL] - Primary authentication method
+ * @param {BrandData} [props.brandData=defaultBrandData] - Custom branding data
+ */
 export const OktoProvider = ({
   children,
   apiKey,
@@ -657,4 +668,15 @@ export const OktoProvider = ({
   );
 };
 
-export const useOkto = () => useContext(OktoContext);
+/**
+ * Hook to access Okto SDK functionality
+ *
+ * @returns {OktoContextType} Okto context value
+ */
+export const useOkto = () => {
+  const context = useContext(OktoContext);
+  if (context === null) {
+    throw new Error("useOkto must be used within an OktoProvider");
+  }
+  return context as OktoContextType;
+};
