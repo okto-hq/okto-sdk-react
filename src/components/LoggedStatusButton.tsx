@@ -1,20 +1,13 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useContext } from "react";
 import styles from "./LoggedStatusButton.module.css";
+import { OktoContext } from "../OktoProvider";
 
-interface StatusButtonRef {
-  toggleStatus: () => void;
-}
-
-const LoggedStatusButton: React.FC<{}> = forwardRef((_, ref) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const toggleStatus = () => {
-    setIsLoggedIn((prevStatus) => !prevStatus);
-  };
-
-  useImperativeHandle(ref, () => ({
-    toggleStatus,
-  }));
+const LoggedStatusButton: React.FC<{}> = forwardRef((_) => {
+  const context = useContext(OktoContext);
+  if (!context) {
+    return null;
+  }
+  const { isLoggedIn } = context;
 
   return (
     <div className={styles.buttonContainer}>
