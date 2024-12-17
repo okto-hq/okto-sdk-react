@@ -55,7 +55,19 @@ import { OktoModal } from "./components/OktoModal";
 import { OnboardingModal } from "./components/OnboardingModal";
 import LoggedStatusButton from "./components/LoggedStatusButton";
 
-export const OktoContext = createContext<OktoContextType | null>(null);
+export const OktoContext = createContext<OktoContextType>(null!);
+
+/**
+ * Provider component for Okto SDK functionality
+ *
+ * @param {Object} props - Provider props
+ * @param {ReactNode} props.children - Child components
+ * @param {string} props.apiKey - API key for Okto
+ * @param {BuildType} props.buildType - Build environment type
+ * @param {() => Promise<string>} [props.gAuthCb] - Optional callback for Google authentication
+ * @param {AuthType} [props.primaryAuth=AuthType.EMAIL] - Primary authentication method
+ * @param {BrandData} [props.brandData=defaultBrandData] - Custom branding data
+ */
 
 export const OktoProvider = ({
   children,
@@ -78,6 +90,7 @@ export const OktoProvider = ({
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
   const isLoggedIn = useMemo(() => authDetails !== null, [authDetails]);
+  const [isReady, setIsReady] = useState(false);
 
   const axiosInstance = useMemo(() => {
     const axiosInstanceTmp = axios.create({
@@ -135,6 +148,7 @@ export const OktoProvider = ({
   async function updateAuthDetailsFromStorage() {
     const storedAuthDetails = await getJSONLocalStorage(AUTH_DETAILS_KEY);
     setAuthDetails(storedAuthDetails);
+    setIsReady(true);
   }
 
   async function updateAuthDetails(authDetailsNew: AuthDetails | null) {
@@ -178,7 +192,7 @@ export const OktoProvider = ({
     idToken: string,
     callback: (result: any, error: any) => void,
   ) {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       return callback(null, new Error("SDK is not initialized"));
     }
 
@@ -225,7 +239,7 @@ export const OktoProvider = ({
     jwtToken: string,
     callback: (result: any, error: any) => void,
   ) {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       return callback(null, new Error("SDK is not initialized"));
     }
 
@@ -269,8 +283,12 @@ export const OktoProvider = ({
     endpoint: string,
     queryUrl: string | null = null,
   ): Promise<T> {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
+    }
+
+    if (!isLoggedIn) {
+      throw new Error("User is not logged in");
     }
 
     const url = queryUrl ? `${endpoint}?${queryUrl}` : endpoint;
@@ -290,8 +308,12 @@ export const OktoProvider = ({
     endpoint: string,
     data: any = null,
   ): Promise<T> {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
+    }
+
+    if (!isLoggedIn) {
+      throw new Error("User is not logged in");
     }
 
     try {
@@ -602,6 +624,7 @@ export const OktoProvider = ({
       value={{
         LoggedStatusButton,
         isLoggedIn,
+        isReady,
         authenticate,
         authenticateWithUserId,
         logOut,
@@ -648,4 +671,15 @@ export const OktoProvider = ({
   );
 };
 
-export const useOkto = () => useContext(OktoContext);
+/**
+ * Hook to access Okto SDK functionality
+ *
+ * @returns {OktoContextType} Okto context value
+ */
+export const useOkto = () => {
+  const context = useContext(OktoContext);
+  if (context === null) {
+    throw new Error("useOkto must be used within an OktoProvider");
+  }
+  return context as OktoContextType;
+};
