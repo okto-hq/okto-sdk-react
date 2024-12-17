@@ -179,7 +179,7 @@ export const OktoProvider = ({
     idToken: string,
     callback: (result: any, error: any) => void,
   ) {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       return callback(null, new Error("SDK is not initialized"));
     }
 
@@ -226,7 +226,7 @@ export const OktoProvider = ({
     jwtToken: string,
     callback: (result: any, error: any) => void,
   ) {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       return callback(null, new Error("SDK is not initialized"));
     }
 
@@ -270,7 +270,7 @@ export const OktoProvider = ({
     endpoint: string,
     queryUrl: string | null = null,
   ): Promise<T> {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
     }
 
@@ -295,7 +295,7 @@ export const OktoProvider = ({
     endpoint: string,
     data: any = null,
   ): Promise<T> {
-    if (!axiosInstance) {
+    if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
     }
 
