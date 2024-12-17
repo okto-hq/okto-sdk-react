@@ -186,12 +186,6 @@ export const OktoProvider = ({
     return null;
   }
 
-  /**
-   * Authenticates a user with Google OAuth
-   *
-   * @param {string} idToken - Google ID token
-   * @param {(result: any, error: any) => void} callback - Result callback
-   */
   async function authenticate(
     idToken: string,
     callback: (result: any, error: any) => void,
@@ -283,15 +277,6 @@ export const OktoProvider = ({
     }
   }
 
-  /**
-   * Makes a GET request to the Okto API
-   *
-   * @template T - Response data type
-   * @param {string} endpoint - API endpoint
-   * @param {string | null} [queryUrl=null] - Optional query parameters
-   * @returns {Promise<T>} Response data
-   * @throws {Error} If SDK not initialized or user not logged in
-   */
   async function makeGetRequest<T>(
     endpoint: string,
     queryUrl: string | null = null,
@@ -317,15 +302,6 @@ export const OktoProvider = ({
     }
   }
 
-  /**
-   * Makes a POST request to the Okto API
-   *
-   * @template T - Response data type
-   * @param {string} endpoint - API endpoint
-   * @param {any} [data=null] - Request body data
-   * @returns {Promise<T>} Response data
-   * @throws {Error} If SDK not initialized or user not logged in
-   */
   async function makePostRequest<T>(
     endpoint: string,
     data: any = null,
@@ -350,20 +326,10 @@ export const OktoProvider = ({
     }
   }
 
-  /**
-   * Gets user's portfolio data
-   *
-   * @returns {Promise<PortfolioData>} Portfolio information
-   */
   async function getPortfolio(): Promise<PortfolioData> {
     return makeGetRequest<PortfolioData>("/v1/portfolio");
   }
 
-  /**
-   * Gets list of supported tokens
-   *
-   * @returns {Promise<TokensData>} Supported tokens information
-   */
   async function getSupportedTokens(): Promise<TokensData> {
     return makeGetRequest<TokensData>("/v1/supported/tokens");
   }
@@ -418,13 +384,6 @@ export const OktoProvider = ({
     );
   }
 
-  /**
-   * Transfers tokens with job status tracking
-   *
-   * @param {TransferTokens} data - Transfer details
-   * @returns {Promise<Order>} Order details with status
-   * @throws {Error} If transfer fails
-   */
   async function transferTokensWithJobStatus(
     data: TransferTokens,
   ): Promise<Order> {
@@ -624,9 +583,6 @@ export const OktoProvider = ({
     return false;
   }
 
-  /**
-   * Shows the Okto widget modal
-   */
   function showWidgetModal() {
     oktoModalRef.current?.openModal(ModalType.WIDGET, {
       theme,
@@ -643,31 +599,14 @@ export const OktoProvider = ({
     oktoModalRef.current?.closeModal();
   }
 
-  /**
-   * Updates the UI theme
-   *
-   * @param {Partial<Theme>} newTheme - Theme properties to update
-   */
   function setTheme(newTheme: Partial<Theme>) {
     updateTheme({ ...theme, ...newTheme });
   }
 
-  /**
-   * Gets the current UI theme
-   *
-   * @returns {Theme} Current theme configuration
-   */
   function getTheme(): Theme {
     return theme;
   }
 
-  /**
-   * Reads data from a smart contract
-   *
-   * @param {string} network_name - Network name
-   * @param {any} data - Contract interaction data
-   * @returns {Promise<any>} Contract response data
-   */
   async function readContractData(
     network_name: string,
     data: any,
@@ -739,5 +678,5 @@ export const useOkto = () => {
   if (context === null) {
     throw new Error("useOkto must be used within an OktoProvider");
   }
-  return context;
+  return context as OktoContextType;
 };
