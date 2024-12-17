@@ -53,8 +53,9 @@ import {
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
 import { OktoModal } from "./components/OktoModal";
 import { OnboardingModal } from "./components/OnboardingModal";
+import LoggedStatusButton from "./components/LoggedStatusButton";
 
-const OktoContext = createContext<OktoContextType>(null!);
+export const OktoContext = createContext<OktoContextType>(null!);
 
 /**
  * Provider component for Okto SDK functionality
@@ -67,6 +68,7 @@ const OktoContext = createContext<OktoContextType>(null!);
  * @param {AuthType} [props.primaryAuth=AuthType.EMAIL] - Primary authentication method
  * @param {BrandData} [props.brandData=defaultBrandData] - Custom branding data
  */
+
 export const OktoProvider = ({
   children,
   apiKey,
@@ -620,6 +622,7 @@ export const OktoProvider = ({
   return (
     <OktoContext.Provider
       value={{
+        LoggedStatusButton,
         isLoggedIn,
         isReady,
         authenticate,

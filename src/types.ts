@@ -22,6 +22,7 @@ export enum AuthType {
 }
 
 export interface OktoContextType {
+  LoggedStatusButton: React.FC;
   /**
    * Indicates whether the SDK has completed initialization
    * @readonly
