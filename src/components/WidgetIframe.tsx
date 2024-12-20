@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import styles from "./WidgetIframe.module.css";
-import { widgetUrl } from "../constants";
-import { InjectData, ModalData } from "../types";
+import { widgetUrls } from "../constants";
+import { BuildType, InjectData, ModalData } from "../types";
 
 function getInjectedData(modalData: ModalData): InjectData {
   return {
@@ -26,6 +26,7 @@ const WidgetIframe = ({
   onClose: () => void;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const widgetUrl = widgetUrls[modalData?.environment as BuildType];
 
   useEffect(() => {
     const iframe = iframeRef.current;

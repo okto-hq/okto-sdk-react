@@ -12,10 +12,14 @@ export const onBoardingUrls = {
   [BuildType.SANDBOX]: "https://okto-sandbox.firebaseapp.com/#/login_screen",
 };
 
+export const widgetUrls = {
+  [BuildType.PRODUCTION]: "https://3p.okto.tech/login_screen#/home",
+  [BuildType.STAGING]: "https://3p.oktostage.com/#/home",
+  [BuildType.SANDBOX]: "https://okto-sandbox.firebaseapp.com/#/home",
+};
+
 export const oktoLogo =
   "https://okto-sandbox.firebaseapp.com/assets/assets/png_assets/Okto.png";
-
-export const widgetUrl = "https://3p.okto.tech";
 
 export const AUTH_DETAILS_KEY = "AUTH_DETAILS";
 
