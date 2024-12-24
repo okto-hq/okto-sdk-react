@@ -305,12 +305,13 @@ export const OktoProvider = ({
   async function makePostRequest<T>(
     endpoint: string,
     data: any = null,
+    requireLoggedIn: boolean = true,
   ): Promise<T> {
     if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
     }
 
-    if (!isLoggedIn) {
+    if (requireLoggedIn && !isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
@@ -512,9 +513,13 @@ export const OktoProvider = ({
   }
 
   async function sendEmailOTP(email: string): Promise<SendOTPResponse> {
-    return makePostRequest<SendOTPResponse>("/v1/authenticate/email", {
-      email,
-    });
+    return makePostRequest<SendOTPResponse>(
+      "/v1/authenticate/email",
+      {
+        email,
+      },
+      false,
+    );
   }
 
   async function verifyEmailOTP(
@@ -526,6 +531,7 @@ export const OktoProvider = ({
       const response = await makePostRequest<OTPAuthResponse>(
         "/v1/authenticate/email/verify",
         { email, otp, token },
+        false,
       );
       if (response.message === "success") {
         const authDetails: AuthDetails = {
@@ -546,10 +552,14 @@ export const OktoProvider = ({
     phoneNumber: string,
     countryShortName: string,
   ): Promise<SendOTPResponse> {
-    return makePostRequest<SendOTPResponse>("/v1/authenticate/phone", {
-      phone_number: phoneNumber,
-      country_short_name: countryShortName,
-    });
+    return makePostRequest<SendOTPResponse>(
+      "/v1/authenticate/phone",
+      {
+        phone_number: phoneNumber,
+        country_short_name: countryShortName,
+      },
+      false,
+    );
   }
 
   async function verifyPhoneOTP(
@@ -567,6 +577,7 @@ export const OktoProvider = ({
           otp,
           token,
         },
+        false,
       );
       if (response.message === "success") {
         const authDetails: AuthDetails = {
