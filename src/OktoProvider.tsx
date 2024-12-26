@@ -82,8 +82,8 @@ export const OktoProvider = ({
   primaryAuth?: AuthType;
   brandData?: BrandData;
 }) => {
-  const oktoModalRef = useRef<any>(null);
-  const onboardingModalRef = useRef<any>(null);
+  const portfolioScreenRef = useRef<any>(null);
+  const onboardingScreenRef = useRef<any>(null);
   const baseUrl = useMemo(() => baseUrls[buildType], [buildType]);
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
@@ -595,7 +595,7 @@ export const OktoProvider = ({
   }
 
   function showWidgetModal() {
-    oktoModalRef.current?.openModal(ModalType.WIDGET, {
+    portfolioScreenRef.current?.openModal(ModalType.WIDGET, {
       theme,
       authToken: authDetails?.authToken,
       environment: buildType.toString(),
@@ -603,11 +603,11 @@ export const OktoProvider = ({
   }
 
   function showOnboardingModal() {
-    onboardingModalRef.current?.openModal();
+    onboardingScreenRef.current?.openModal();
   }
 
   function closeModal() {
-    oktoModalRef.current?.closeModal();
+    portfolioScreenRef.current?.closeModal();
   }
 
   function setTheme(newTheme: Partial<Theme>) {
@@ -664,9 +664,9 @@ export const OktoProvider = ({
       }}
     >
       {children}
-      <PortfolioScreen ref={oktoModalRef} />
+      <PortfolioScreen ref={portfolioScreenRef} />
       <OnboardingScreen
-        ref={onboardingModalRef}
+        ref={onboardingScreenRef}
         updateAuthCb={updateAuthDetails}
         gAuthCb={gAuthCb ? gAuthCb : async () => ""}
         buildType={buildType}
