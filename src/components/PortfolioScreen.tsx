@@ -4,7 +4,7 @@ import { ModalType, ModalData } from "../types";
 import styles from "./OnboardingIframe.module.css";
 
 // eslint-disable-next-line no-empty-pattern
-const _OktoModal = ({}: object, ref: any) => {
+const _PortfolioScreen = ({}: object, ref: any) => {
   const [currentScreen, setCurrentScreen] = useState<ModalType | null>(null);
   const [modalData, setModalData] = useState<ModalData | null>(null);
 
@@ -48,4 +48,4 @@ const _OktoModal = ({}: object, ref: any) => {
     </div>
   );
 };
-export const OktoModal = forwardRef(_OktoModal);
+export const PortfolioScreen = forwardRef(_PortfolioScreen);

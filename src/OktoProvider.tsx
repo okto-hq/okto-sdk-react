@@ -51,8 +51,8 @@ import {
   defaultTheme,
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
-import { OktoModal } from "./components/OktoModal";
-import { OnboardingModal } from "./components/OnboardingModal";
+import { PortfolioScreen } from "./components/PortfolioScreen";
+import { OnboardingScreen } from "./components/OnboardingScreen";
 
 const OktoContext = createContext<OktoContextType>(null!);
 
@@ -664,8 +664,8 @@ export const OktoProvider = ({
       }}
     >
       {children}
-      <OktoModal ref={oktoModalRef} />
-      <OnboardingModal
+      <PortfolioScreen ref={oktoModalRef} />
+      <OnboardingScreen
         ref={onboardingModalRef}
         updateAuthCb={updateAuthDetails}
         gAuthCb={gAuthCb ? gAuthCb : async () => ""}

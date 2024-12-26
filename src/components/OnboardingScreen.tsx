@@ -3,7 +3,7 @@ import { AuthDetails, AuthType, BuildType, BrandData, Theme } from "../types";
 import OnboardingIframe from "./OnboardingIframe";
 
 // eslint-disable-next-line no-empty-pattern
-const _OnboardingModal = (
+const _OnboardingScreen = (
   {
     updateAuthCb,
     gAuthCb,
@@ -56,4 +56,4 @@ const _OnboardingModal = (
     />
   );
 };
-export const OnboardingModal = forwardRef(_OnboardingModal);
+export const OnboardingScreen = forwardRef(_OnboardingScreen);
