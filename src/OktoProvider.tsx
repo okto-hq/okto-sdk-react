@@ -34,7 +34,6 @@ import {
   type WalletData,
   type ApiResponse,
   OrderStatus,
-  ModalType,
   SendOTPResponse,
   OTPAuthResponse,
   AuthType,
@@ -595,11 +594,7 @@ export const OktoProvider = ({
   }
 
   function showWidgetModal() {
-    portfolioScreenRef.current?.openModal(ModalType.WIDGET, {
-      theme,
-      authToken: authDetails?.authToken,
-      environment: buildType.toString(),
-    });
+    portfolioScreenRef.current?.openModal();
   }
 
   function showOnboardingModal() {
@@ -664,7 +659,12 @@ export const OktoProvider = ({
       }}
     >
       {children}
-      <PortfolioScreen ref={portfolioScreenRef} />
+      <PortfolioScreen
+        authToken={authDetails?.authToken}
+        buildType={buildType}
+        theme={theme}
+        ref={portfolioScreenRef}
+      />
       <OnboardingScreen
         ref={onboardingScreenRef}
         updateAuthCb={updateAuthDetails}

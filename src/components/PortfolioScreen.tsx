@@ -1,25 +1,41 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+} from "react";
 import WidgetIframe from "./WidgetIframe";
-import { ModalType, ModalData } from "../types";
+import { Theme, BuildType } from "../types";
 import styles from "./OnboardingIframe.module.css";
 
 // eslint-disable-next-line no-empty-pattern
-const _PortfolioScreen = ({}: object, ref: any) => {
-  const [currentScreen, setCurrentScreen] = useState<ModalType | null>(null);
-  const [modalData, setModalData] = useState<ModalData | null>(null);
+const _PortfolioScreen = (
+  {
+    authToken,
+    buildType,
+    theme,
+  }: {
+    authToken: string | undefined;
+    buildType: BuildType;
+    theme: Theme;
+  },
+  ref: any,
+) => {
+  const [showScreen, setShowScreen] = useState(false);
+  const modalData = useMemo(() => {
+    return {
+      authToken: authToken || "",
+      environment: buildType as string,
+      theme,
+    };
+  }, [authToken, buildType, theme]);
 
-  const openModal = (
-    screen: ModalType | null,
-    widgetModalData: ModalData | null = null,
-  ) => {
-    setCurrentScreen(screen);
-    if (widgetModalData) {
-      setModalData(widgetModalData);
-    }
+  const openModal = () => {
+    setShowScreen(true);
   };
 
   const closeModal = () => {
-    setCurrentScreen(null);
+    setShowScreen(false);
   };
 
   useImperativeHandle(ref, () => ({
@@ -33,13 +49,13 @@ const _PortfolioScreen = ({}: object, ref: any) => {
 
   return (
     <div
-      className={`${styles.modalOverlay} ${currentScreen ? "" : styles.hidden}`}
+      className={`${styles.modalOverlay} ${showScreen ? "" : styles.hidden}`}
       onClick={handleClose}
     >
       <div className={styles.modalContainer}>
         <div className={styles.modalContent}>
           <div className={styles.container}>
-            {currentScreen === ModalType.WIDGET && (
+            {showScreen && (
               <WidgetIframe modalData={modalData} onClose={handleClose} />
             )}
           </div>
