@@ -72,7 +72,7 @@ const OnboardingIframe = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [refreshNonce, setRefreshNonce] = useState(0);
 
-  const widgetUrl = "http://localhost:5011/#/login_screen"; // TODO: change to widgetUrls
+  const widgetUrl = onBoardingUrls[buildType]; 
 
   const refreshIframe = () => {
     setRefreshNonce(refreshNonce + 1);
