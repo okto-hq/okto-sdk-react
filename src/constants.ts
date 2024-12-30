@@ -25,13 +25,13 @@ export const AUTH_DETAILS_KEY = "AUTH_DETAILS";
 
 export const defaultTheme: Theme = {
   textPrimaryColor: "0xFFFFFFFF",
-  textSecondaryColor: "0xFFFFFFFF",
-  textTertiaryColor: "0xFFFFFFFF",
-  accent1Color: "0x80433454",
+  textSecondaryColor: "0xB3FFFFFF",
+  textTertiaryColor: "0xffA8A8A8",
+  accent1Color: "0xFF905BF5",
   accent2Color: "0x80905BF5",
   strokeBorderColor: "0xFFACACAB",
   strokeDividerColor: "0x4DA8A8A8",
-  surfaceColor: "0xFF1F0A2F",
+  surfaceColor: "0xFF262528",
   backgroundColor: "0xFF000000",
 };
 
