@@ -34,7 +34,6 @@ import {
   type WalletData,
   type ApiResponse,
   OrderStatus,
-  ModalType,
   SendOTPResponse,
   OTPAuthResponse,
   AuthType,
@@ -51,8 +50,8 @@ import {
   defaultTheme,
 } from "./constants";
 import { storeJSONLocalStorage, getJSONLocalStorage } from "./utils/storage";
-import { OktoModal } from "./components/OktoModal";
-import { OnboardingModal } from "./components/OnboardingModal";
+import { PortfolioScreen } from "./components/PortfolioScreen";
+import { OnboardingScreen } from "./components/OnboardingScreen";
 
 const OktoContext = createContext<OktoContextType>(null!);
 
@@ -82,8 +81,8 @@ export const OktoProvider = ({
   primaryAuth?: AuthType;
   brandData?: BrandData;
 }) => {
-  const oktoModalRef = useRef<any>(null);
-  const onboardingModalRef = useRef<any>(null);
+  const portfolioScreenRef = useRef<any>(null);
+  const onboardingScreenRef = useRef<any>(null);
   const baseUrl = useMemo(() => baseUrls[buildType], [buildType]);
   const [authDetails, setAuthDetails] = useState<AuthDetails | null>(null);
   const [theme, updateTheme] = useState<Theme>(defaultTheme);
@@ -305,12 +304,13 @@ export const OktoProvider = ({
   async function makePostRequest<T>(
     endpoint: string,
     data: any = null,
+    requireLoggedIn: boolean = true,
   ): Promise<T> {
     if (!axiosInstance || !isReady) {
       throw new Error("SDK is not initialized");
     }
 
-    if (!isLoggedIn) {
+    if (requireLoggedIn && !isLoggedIn) {
       throw new Error("User is not logged in");
     }
 
@@ -512,9 +512,13 @@ export const OktoProvider = ({
   }
 
   async function sendEmailOTP(email: string): Promise<SendOTPResponse> {
-    return makePostRequest<SendOTPResponse>("/v1/authenticate/email", {
-      email,
-    });
+    return makePostRequest<SendOTPResponse>(
+      "/v1/authenticate/email",
+      {
+        email,
+      },
+      false,
+    );
   }
 
   async function verifyEmailOTP(
@@ -526,6 +530,7 @@ export const OktoProvider = ({
       const response = await makePostRequest<OTPAuthResponse>(
         "/v1/authenticate/email/verify",
         { email, otp, token },
+        false,
       );
       if (response.message === "success") {
         const authDetails: AuthDetails = {
@@ -546,10 +551,14 @@ export const OktoProvider = ({
     phoneNumber: string,
     countryShortName: string,
   ): Promise<SendOTPResponse> {
-    return makePostRequest<SendOTPResponse>("/v1/authenticate/phone", {
-      phone_number: phoneNumber,
-      country_short_name: countryShortName,
-    });
+    return makePostRequest<SendOTPResponse>(
+      "/v1/authenticate/phone",
+      {
+        phone_number: phoneNumber,
+        country_short_name: countryShortName,
+      },
+      false,
+    );
   }
 
   async function verifyPhoneOTP(
@@ -567,6 +576,7 @@ export const OktoProvider = ({
           otp,
           token,
         },
+        false,
       );
       if (response.message === "success") {
         const authDetails: AuthDetails = {
@@ -584,19 +594,15 @@ export const OktoProvider = ({
   }
 
   function showWidgetModal() {
-    oktoModalRef.current?.openModal(ModalType.WIDGET, {
-      theme,
-      authToken: authDetails?.authToken,
-      environment: buildType.toString(),
-    });
+    portfolioScreenRef.current?.openModal();
   }
 
   function showOnboardingModal() {
-    onboardingModalRef.current?.openModal();
+    onboardingScreenRef.current?.openModal();
   }
 
   function closeModal() {
-    oktoModalRef.current?.closeModal();
+    portfolioScreenRef.current?.closeModal();
   }
 
   function setTheme(newTheme: Partial<Theme>) {
@@ -653,9 +659,14 @@ export const OktoProvider = ({
       }}
     >
       {children}
-      <OktoModal ref={oktoModalRef} />
-      <OnboardingModal
-        ref={onboardingModalRef}
+      <PortfolioScreen
+        authToken={authDetails?.authToken}
+        buildType={buildType}
+        theme={theme}
+        ref={portfolioScreenRef}
+      />
+      <OnboardingScreen
+        ref={onboardingScreenRef}
         updateAuthCb={updateAuthDetails}
         gAuthCb={gAuthCb ? gAuthCb : async () => ""}
         buildType={buildType}
