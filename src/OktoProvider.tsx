@@ -623,6 +623,13 @@ export const OktoProvider = ({
     });
   }
 
+  function getAuthDetails(): AuthDetails | null {
+    if (!isReady) {
+      throw new Error("SDK is not initialized");
+    }
+    return authDetails;
+  }
+
   return (
     <OktoContext.Provider
       value={{
@@ -656,6 +663,7 @@ export const OktoProvider = ({
         sendPhoneOTP,
         verifyPhoneOTP,
         readContractData,
+        getAuthDetails,
       }}
     >
       {children}

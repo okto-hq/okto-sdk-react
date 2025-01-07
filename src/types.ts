@@ -259,6 +259,12 @@ export interface OktoContextType {
    * @returns {Promise<any>} Contract response data
    */
   readContractData: (network_name: string, data: any) => Promise<any>;
+
+  /**
+   * Gets authentication details
+   * @returns {AuthDetails | null} Authentication details
+   */
+  getAuthDetails: () => AuthDetails | null;
 }
 
 export interface ApiResponse<T> {
