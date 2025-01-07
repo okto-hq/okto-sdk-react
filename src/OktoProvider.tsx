@@ -624,6 +624,9 @@ export const OktoProvider = ({
   }
 
   function getAuthDetails(): AuthDetails | null {
+    if (!isReady) {
+      throw new Error("SDK is not initialized");
+    }
     return authDetails;
   }
 
