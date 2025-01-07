@@ -1,6 +1,6 @@
 {
   "name": "okto-sdk-react",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Okto SDK for react",
   "scripts": {
     "dev": "rollup -c --watch",

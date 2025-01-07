@@ -623,6 +623,10 @@ export const OktoProvider = ({
     });
   }
 
+  function getAuthDetails(): AuthDetails | null {
+    return authDetails;
+  }
+
   return (
     <OktoContext.Provider
       value={{
@@ -656,6 +660,7 @@ export const OktoProvider = ({
         sendPhoneOTP,
         verifyPhoneOTP,
         readContractData,
+        getAuthDetails,
       }}
     >
       {children}
