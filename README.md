@@ -1,11 +1,15 @@
 # Okto React SDK
 
+> ⚠️ **Important Notice**: This is an older version of the Okto SDK. If you're building for ETHDenver 2025, please use [@okto_web3/react-sdk](https://www.npmjs.com/package/@okto_web3/react-sdk) which includes the latest features and improvements.
+
 ### Overview
+
 The **Okto React SDK** is a powerful tool designed to onboard users to the Web3 ecosystem seamlessly within React applications. With minimal setup, developers can integrate multi-chain Web3 capabilities into their apps, including wallet management, token operations, and advanced smart contract interactions. This guide provides a comprehensive walkthrough for developers and contributors to get started, implement core features, and contribute to the SDK’s development.
 
 ---
 
 ### Table of Contents
+
 1. [Features](#features)
 2. [Prerequisites](#prerequisites)
 3. [Installation](#installation)
@@ -23,11 +27,13 @@ The **Okto React SDK** is a powerful tool designed to onboard users to the Web3 
 ### Features
 
 #### Supported Chains
+
 - **EVM-Compatible Chains**: Ethereum, Polygon, Binance Smart Chain, and others.
 - **Non-EVM Chains**: Solana, Aptos.
 - **Upcoming Support**: Cosmos ecosystem.
 
 #### Core Capabilities
+
 - **Authentication**: Options include Google OAuth, Email OTP, and Phone OTP.
 - **Wallet Management**: Create, manage, and interact with multiple wallets.
 - **Token Operations**: Transfer and manage various tokens seamlessly.
@@ -41,15 +47,18 @@ The **Okto React SDK** is a powerful tool designed to onboard users to the Web3 
 ### Prerequisites
 
 #### Development Environment
+
 1. **Node.js** and **npm** (or **yarn**) installed.
 2. React application setup with a compatible version.
 3. Required dependencies installed (see [Installation](#installation)).
 
 #### Credentials
+
 - **Okto API Key**: Obtainable from the Okto Developer Dashboard.
 - **Google OAuth Credentials**: Required for authentication.
 
 #### Environment
+
 - **Sandbox Environment**: Default for testing and development.
 - **Production Environment**: Enabled through the Admin Panel.
 
@@ -58,12 +67,15 @@ The **Okto React SDK** is a powerful tool designed to onboard users to the Web3 
 ### Installation
 
 #### Method 1: Integrate into an Existing React App
+
 ```bash
 npm install okto-sdk-react @react-oauth/google axios
 ```
 
 #### Method 2: Use `create-okto-app`
+
 For a preconfigured React app:
+
 ```bash
 npx create-okto-app@latest
 cd my-okto-app
@@ -71,6 +83,7 @@ npm install
 ```
 
 #### Method 3: Next.js Integration
+
 ```bash
 npx create-okto-app@latest
 # Select Next.js template
@@ -83,26 +96,33 @@ npm install
 ### Configuration
 
 #### Step 1: Environment Variables
+
 Create a `.env` file in the project root:
+
 ```env
 REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
 REACT_APP_OKTO_CLIENT_API_KEY=your_okto_api_key
 ```
 
 #### Step 2: SDK Provider Setup
-Wrap your app with the `OktoProvider` in `index.js`:
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import { OktoProvider, BuildType } from 'okto-sdk-react';
-import App from './App';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+Wrap your app with the `OktoProvider` in `index.js`:
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { OktoProvider, BuildType } from "okto-sdk-react";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <OktoProvider apiKey={process.env.REACT_APP_OKTO_CLIENT_API_KEY} buildType={BuildType.SANDBOX}>
+      <OktoProvider
+        apiKey={process.env.REACT_APP_OKTO_CLIENT_API_KEY}
+        buildType={BuildType.SANDBOX}
+      >
         <App />
       </OktoProvider>
     </GoogleOAuthProvider>
@@ -115,10 +135,12 @@ root.render(
 ### Core Features
 
 #### 1. Google OAuth Authentication
+
 Authenticate users with Google OAuth for seamless onboarding:
+
 ```jsx
-import { GoogleLogin } from '@react-oauth/google';
-import { useOkto } from 'okto-sdk-react';
+import { GoogleLogin } from "@react-oauth/google";
+import { useOkto } from "okto-sdk-react";
 
 const Login = () => {
   const { authenticate } = useOkto();
@@ -126,9 +148,9 @@ const Login = () => {
   const handleGoogleLogin = async (response) => {
     try {
       await authenticate(response.credential);
-      console.log('User authenticated successfully!');
+      console.log("User authenticated successfully!");
     } catch (err) {
-      console.error('Authentication failed:', err);
+      console.error("Authentication failed:", err);
     }
   };
 
@@ -137,7 +159,9 @@ const Login = () => {
 ```
 
 #### 2. Wallet Management
+
 Create and manage wallets:
+
 ```jsx
 const Wallets = () => {
   const { getWallets, createWallet } = useOkto();
@@ -168,7 +192,9 @@ const Wallets = () => {
 ```
 
 #### 3. Token Transfers
+
 Transfer tokens across supported networks:
+
 ```jsx
 const Transfer = () => {
   const { transferTokens } = useOkto();
@@ -176,14 +202,14 @@ const Transfer = () => {
   const handleTransfer = async () => {
     try {
       await transferTokens({
-        network_name: 'Ethereum',
-        token_address: '0xTokenAddress',
-        recipient_address: '0xRecipientAddress',
-        quantity: '1',
+        network_name: "Ethereum",
+        token_address: "0xTokenAddress",
+        recipient_address: "0xRecipientAddress",
+        quantity: "1",
       });
-      console.log('Transfer successful!');
+      console.log("Transfer successful!");
     } catch (err) {
-      console.error('Transfer failed:', err);
+      console.error("Transfer failed:", err);
     }
   };
 
@@ -196,6 +222,7 @@ const Transfer = () => {
 ### Contributing to the SDK
 
 #### Development Workflow
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/okto-hq/okto-sdk-react.git
@@ -211,11 +238,13 @@ const Transfer = () => {
    ```
 
 #### Guidelines
+
 - Write clear, concise, and reusable code.
 - Adhere to the existing coding standards.
 - Document new features and provide example implementations.
 
 #### Issues and Feature Requests
+
 Submit issues or feature requests via GitHub. Ensure you provide clear steps to reproduce bugs or detailed descriptions for feature suggestions.
 
 ---
@@ -223,6 +252,7 @@ Submit issues or feature requests via GitHub. Ensure you provide clear steps to 
 ### API Reference
 
 #### Authentication
+
 ```typescript
 authenticate(idToken: string): Promise<AuthResponse>;
 logout(): void;
@@ -230,6 +260,7 @@ isLoggedIn(): boolean;
 ```
 
 #### Wallet Operations
+
 ```typescript
 getWallets(): Promise<Wallet[]>;
 createWallet(): Promise<Wallet>;
@@ -237,6 +268,7 @@ getPortfolio(): Promise<Portfolio>;
 ```
 
 #### Token Operations
+
 ```typescript
 transferTokens(data: TransferData): Promise<TransactionReceipt>;
 getSupportedTokens(): Promise<Token[]>;
@@ -247,21 +279,23 @@ getSupportedTokens(): Promise<Token[]>;
 ### Troubleshooting
 
 #### Common Issues
+
 - **Authentication Errors**: Verify API keys and OAuth credentials.
 - **Transaction Failures**: Check network configurations and wallet balances.
 - **Network Connectivity**: Ensure proper RPC endpoints are configured.
 
 #### Debugging Tips
+
 1. Use browser dev tools to monitor network requests.
 2. Log SDK responses for debugging purposes.
 
 ---
 
 ### Support
+
 - **Documentation**: [Okto SDK Docs](https://sdk-docs.okto.tech/)
 - **Email**: support@okto.tech
 
 ---
 
 Built with ❤️ by the Okto team.
-
